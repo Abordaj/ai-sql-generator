@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>AI SQL Generator</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+<h1>AI SQL Generator</h1>
+<form action="/api/generate" method="post">
+    <input type="text" name="prompt" placeholder="Enter your SQL request">
+    <select name="provider">
+        <option value="gemini">Gemini</option>
+        <option value="yandexgpt">YandexGPT</option>
+    </select>
+    <input type="range" name="temperature" min="0.0" max="1.0" step="0.1" value="0.5">
+    <button type="submit">Generate</button>
+</form>
+</body>
+</html>

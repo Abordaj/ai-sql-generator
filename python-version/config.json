@@ -1,0 +1,11 @@
+{
+  "supported_models": [
+    "gemini",
+    "yandexgpt"
+  ],
+  "default_model": "gemini",
+  "default_temperature": 0.5,
+  "minimum_temperature": 0.0,
+  "maximum_temperature": 1.0,
+  "maximum_input_length": 200
+}
