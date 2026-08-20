@@ -1,3 +1,4 @@
-# Requirements for Flask application
-flask
-
+Flask
+python-dotenv
+openai
+google-genai

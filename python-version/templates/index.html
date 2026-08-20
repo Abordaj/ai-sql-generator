@@ -1,19 +1,922 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
+
 <head>
-<title>AI SQL Generator</title>
-<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>AI SQL Generator</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}"
+    >
+
+    <!-- Mermaid используется для отрисовки ER-диаграммы результата -->
+    <script
+        src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"
+        defer
+    ></script>
+
+    <script
+        src="{{ url_for('static', filename='js/app.js') }}"
+        defer
+    ></script>
 </head>
-<body>
-<h1>AI SQL Generator</h1>
-<form action="/api/generate" method="post">
-    <input type="text" name="prompt" placeholder="Enter your SQL request">
-    <select name="provider">
-        <option value="gemini">Gemini</option>
-        <option value="yandexgpt">YandexGPT</option>
-    </select>
-    <input type="range" name="temperature" min="0.0" max="1.0" step="0.1" value="0.5">
-    <button type="submit">Generate</button>
-</form>
+
+<body class="app-page">
+
+    <!-- =====================================================
+         ДЕКОРАТИВНЫЙ ФОН
+         ===================================================== -->
+
+    <div class="page-background" aria-hidden="true">
+
+        <!-- Мягкие световые пятна -->
+        <div class="background-orb orb-left-top"></div>
+        <div class="background-orb orb-left-bottom"></div>
+        <div class="background-orb orb-right-top"></div>
+        <div class="background-orb orb-right-bottom"></div>
+
+        <!-- Плавные декоративные линии -->
+        <div class="background-wave wave-one"></div>
+        <div class="background-wave wave-two"></div>
+
+        <!-- Светящиеся точки -->
+        <span class="floating-dot dot-one"></span>
+        <span class="floating-dot dot-two"></span>
+        <span class="floating-dot dot-three"></span>
+        <span class="floating-dot dot-four"></span>
+
+        <!-- Искры -->
+        <span class="sparkle sparkle-one">✦</span>
+        <span class="sparkle sparkle-two">✦</span>
+        <span class="sparkle sparkle-three">✦</span>
+        <span class="sparkle sparkle-four">✦</span>
+
+        <!-- Красивая БД + SQL из нашего референса -->
+        <div class="decor-image-wrapper decor-left-wrapper">
+            <img
+                class="decor-image decor-left-image"
+                src="{{ url_for('static', filename='images/ai_sql_left_decor.png') }}"
+                alt=""
+            >
+        </div>
+
+        <!-- Красивая ER-диаграмма из нашего референса -->
+        <div class="decor-image-wrapper decor-right-wrapper">
+            <img
+                class="decor-image decor-right-image"
+                src="{{ url_for('static', filename='images/ai_sql_right_decor.png') }}"
+                alt=""
+            >
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         HEADER
+         ===================================================== -->
+
+    <header class="app-header">
+
+        <div class="header-container">
+
+            <div class="brand">
+
+                <!-- Логотип БД + AI -->
+                <div class="brand-mark" aria-hidden="true">
+
+                    <svg
+                        viewBox="0 0 72 72"
+                        xmlns="http://www.w3.org/2000/svg"
+                    >
+
+                        <defs>
+                            <linearGradient
+                                id="logo-db-gradient"
+                                x1="0"
+                                y1="0"
+                                x2="1"
+                                y2="1"
+                            >
+                                <stop
+                                    offset="0%"
+                                    stop-color="#50e2d2"
+                                />
+                                <stop
+                                    offset="100%"
+                                    stop-color="#48aef1"
+                                />
+                            </linearGradient>
+
+                            <linearGradient
+                                id="logo-ai-gradient"
+                                x1="0"
+                                y1="0"
+                                x2="1"
+                                y2="1"
+                            >
+                                <stop
+                                    offset="0%"
+                                    stop-color="#31d0c4"
+                                />
+                                <stop
+                                    offset="100%"
+                                    stop-color="#489ff0"
+                                />
+                            </linearGradient>
+                        </defs>
+
+                        <!-- База данных -->
+                        <ellipse
+                            cx="29"
+                            cy="18"
+                            rx="20"
+                            ry="9"
+                            fill="url(#logo-db-gradient)"
+                        />
+
+                        <path
+                            d="M9 18V43C9 49 18 53 29 53C40 53 49 49 49 43V18"
+                            fill="url(#logo-db-gradient)"
+                        />
+
+                        <ellipse
+                            cx="29"
+                            cy="30"
+                            rx="20"
+                            ry="9"
+                            fill="none"
+                            stroke="rgba(255,255,255,0.55)"
+                            stroke-width="2"
+                        />
+
+                        <ellipse
+                            cx="29"
+                            cy="42"
+                            rx="20"
+                            ry="9"
+                            fill="none"
+                            stroke="rgba(255,255,255,0.55)"
+                            stroke-width="2"
+                        />
+
+                        <!-- AI badge -->
+                        <circle
+                            cx="52"
+                            cy="51"
+                            r="17"
+                            fill="#ffffff"
+                        />
+
+                        <circle
+                            cx="52"
+                            cy="51"
+                            r="14"
+                            fill="url(#logo-ai-gradient)"
+                        />
+
+                        <text
+                            x="52"
+                            y="55"
+                            text-anchor="middle"
+                            fill="#ffffff"
+                            font-size="11"
+                            font-family="Arial, sans-serif"
+                            font-weight="800"
+                        >
+                            AI
+                        </text>
+
+                    </svg>
+
+                </div>
+
+
+                <div class="header-title">
+
+                    <h1>
+                        AI SQL Generator
+                    </h1>
+
+                    <p>
+                        Генерация SQL-запросов и ER-диаграмм
+                        с помощью LLM
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <form
+                action="/logout"
+                method="post"
+                class="logout-form"
+            >
+
+                <button
+                    type="submit"
+                    class="logout-button"
+                >
+
+                    <svg
+                        viewBox="0 0 24 24"
+                        width="19"
+                        height="19"
+                        aria-hidden="true"
+                    >
+                        <path
+                            d="M10 5H5v14h5M14 8l4 4-4 4M8 12h10"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        />
+                    </svg>
+
+                    <span>
+                        Выйти
+                    </span>
+
+                </button>
+
+            </form>
+
+        </div>
+
+    </header>
+
+
+    <!-- =====================================================
+         ОСНОВНОЙ КОНТЕНТ
+         ===================================================== -->
+
+    <main class="main-container">
+
+        <!-- =================================================
+             КАРТОЧКА ГЕНЕРАЦИИ
+             ================================================= -->
+
+        <section class="generation-card">
+
+            <!-- Верхняя часть -->
+            <div class="generation-top">
+
+                <div class="generation-heading">
+
+                    <!-- AI icon -->
+                    <div
+                        class="generation-icon"
+                        aria-hidden="true"
+                    >
+
+                        <svg
+                            viewBox="0 0 52 52"
+                            xmlns="http://www.w3.org/2000/svg"
+                        >
+
+                            <path
+                                d="M13 39L37 15"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="3"
+                                stroke-linecap="round"
+                            />
+
+                            <path
+                                d="M33 12l7 7"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="3"
+                                stroke-linecap="round"
+                            />
+
+                            <path
+                                d="M12 40l-1 5 5-1"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2.5"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            />
+
+                            <!-- Искры -->
+                            <path
+                                d="M14 9v6M11 12h6"
+                                stroke="currentColor"
+                                stroke-width="2.2"
+                                stroke-linecap="round"
+                            />
+
+                            <path
+                                d="M39 29v6M36 32h6"
+                                stroke="currentColor"
+                                stroke-width="2.2"
+                                stroke-linecap="round"
+                            />
+
+                            <path
+                                d="M27 5v4M25 7h4"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                            />
+
+                        </svg>
+
+                    </div>
+
+
+                    <div class="generation-header">
+
+                        <h2>
+                            Создать SQL-запрос
+                        </h2>
+
+                        <p>
+                            Опишите простыми словами, какие данные
+                            необходимо получить.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Подсказка -->
+                <aside class="tip-card">
+
+                    <div
+                        class="tip-icon"
+                        aria-hidden="true"
+                    >
+
+                        <svg
+                            viewBox="0 0 24 24"
+                            width="23"
+                            height="23"
+                        >
+                            <path
+                                d="M9 18h6M10 22h4M8.5 15.5C6.9 14.4 6 12.7 6 10.5a6 6 0 1112 0c0 2.2-.9 3.9-2.5 5-.7.5-1.1 1.2-1.2 2H9.7c-.1-.8-.5-1.5-1.2-2z"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="1.8"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            />
+                        </svg>
+
+                    </div>
+
+
+                    <div class="tip-text">
+
+                        <strong>
+                            Подсказка
+                        </strong>
+
+                        <span>
+                            Используйте естественный язык
+                        </span>
+
+                    </div>
+
+                </aside>
+
+            </div>
+
+
+            <!-- =================================================
+                 Запрос
+                 ================================================= -->
+
+            <div class="form-group prompt-group">
+
+                <label
+                    for="prompt"
+                    class="field-label"
+                >
+
+                    <span
+                        class="field-icon"
+                        aria-hidden="true"
+                    >
+                        ▣
+                    </span>
+
+                    <span>
+                        Запрос
+                    </span>
+
+                </label>
+
+
+                <textarea
+                    id="prompt"
+                    name="prompt"
+                    rows="5"
+                    placeholder="Например: Показать всех клиентов, у которых больше 3 заказов"
+                    required
+                ></textarea>
+
+
+                <div
+                    id="char-count"
+                    class="char-count"
+                    aria-live="polite"
+                >
+                    0
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 Провайдер и модель
+                 ================================================= -->
+
+            <div class="settings-grid">
+
+                <!-- Провайдер -->
+                <div class="form-group">
+
+                    <label
+                        for="provider-select"
+                        class="field-label"
+                    >
+
+                        <span
+                            class="field-icon"
+                            aria-hidden="true"
+                        >
+                            ≋
+                        </span>
+
+                        <span>
+                            Провайдер
+                        </span>
+
+                    </label>
+
+
+                    <div class="select-wrapper provider-select-wrapper">
+
+                        <div
+                            id="provider-badge"
+                            class="provider-badge"
+                            aria-hidden="true"
+                        >
+                            Y
+                        </div>
+
+                        <select
+                            id="provider-select"
+                            name="provider"
+                        >
+                            <option value="">
+                                Загрузка...
+                            </option>
+                        </select>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Модель -->
+                <div class="form-group">
+
+                    <label
+                        for="model-select"
+                        class="field-label"
+                    >
+
+                        <span
+                            class="field-icon model-field-icon"
+                            aria-hidden="true"
+                        >
+                            ⚙
+                        </span>
+
+                        <span>
+                            Модель
+                        </span>
+
+                    </label>
+
+
+                    <div class="select-wrapper">
+
+                        <select
+                            id="model-select"
+                            name="model"
+                        >
+                            <option value="">
+                                Загрузка...
+                            </option>
+                        </select>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 Температура
+                 ================================================= -->
+
+            <div class="form-group temperature-group">
+
+                <div class="temperature-header">
+
+                    <label
+                        for="temperature-slider"
+                        class="field-label"
+                    >
+
+                        <span
+                            class="field-icon"
+                            aria-hidden="true"
+                        >
+                            ♨
+                        </span>
+
+                        <span>
+                            Температура
+                        </span>
+
+                    </label>
+
+
+                    <span
+                        id="temperature-value"
+                        class="temperature-value"
+                    >
+                        —
+                    </span>
+
+                </div>
+
+
+                <div class="temperature-slider-wrapper">
+
+                    <input
+                        type="range"
+                        id="temperature-slider"
+                        name="temperature"
+                    >
+
+                </div>
+
+
+                <div class="temperature-hint">
+
+                    <span
+                        class="temperature-info-icon"
+                        aria-hidden="true"
+                    >
+                        i
+                    </span>
+
+                    <span>
+                        Чем выше значение, тем разнообразнее
+                        может быть ответ модели.
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 Ошибки
+                 ================================================= -->
+
+            <div
+                id="error-message"
+                class="error-message"
+                role="alert"
+                hidden
+            ></div>
+
+
+            <!-- =================================================
+                 Основная кнопка
+                 ================================================= -->
+
+            <button
+                id="generate-button"
+                class="primary-button generate-button"
+                type="button"
+            >
+
+                <span
+                    class="generate-magic-icon"
+                    aria-hidden="true"
+                >
+                    ✧
+                </span>
+
+                <span id="generate-button-text">
+                    Сгенерировать
+                </span>
+
+
+                <svg
+                    class="generate-arrow"
+                    viewBox="0 0 24 24"
+                    width="22"
+                    height="22"
+                    aria-hidden="true"
+                >
+                    <path
+                        d="M5 12h14M14 7l5 5-5 5"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    />
+                </svg>
+
+
+                <span
+                    id="button-loader"
+                    class="button-loader"
+                    hidden
+                ></span>
+
+            </button>
+
+
+            <!-- =================================================
+                 Панель возможностей
+                 ================================================= -->
+
+            <div class="feature-strip">
+
+                <div class="feature-item">
+
+                    <div class="feature-icon database-feature">
+                        ◉
+                    </div>
+
+                    <div class="feature-copy">
+
+                        <strong>
+                            Структура БД
+                        </strong>
+
+                        <span>
+                            Описание схемы
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="feature-divider"></div>
+
+
+                <div class="feature-item">
+
+                    <div class="feature-icon er-feature">
+                        ⑂
+                    </div>
+
+                    <div class="feature-copy">
+
+                        <strong>
+                            ER-диаграмма
+                        </strong>
+
+                        <span>
+                            Визуализация
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="feature-divider"></div>
+
+
+                <div class="feature-item">
+
+                    <div class="feature-icon sql-feature">
+                        &lt;/&gt;
+                    </div>
+
+                    <div class="feature-copy">
+
+                        <strong>
+                            SQL-запрос
+                        </strong>
+
+                        <span>
+                            Готовый код
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="feature-divider"></div>
+
+
+                <div class="feature-item">
+
+                    <div class="feature-icon explanation-feature">
+                        ▤
+                    </div>
+
+                    <div class="feature-copy">
+
+                        <strong>
+                            Объяснение
+                        </strong>
+
+                        <span>
+                            Пошаговый разбор
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             РЕЗУЛЬТАТЫ
+             ================================================= -->
+
+        <section
+            id="results-section"
+            class="results-section"
+            hidden
+        >
+
+            <div class="results-header">
+
+                <span class="results-eyebrow">
+                    Готово
+                </span>
+
+                <h2>
+                    Результат генерации
+                </h2>
+
+            </div>
+
+
+            <div class="results-grid">
+
+                <!-- Структура БД -->
+                <article class="result-card database-card">
+
+                    <div class="card-header">
+
+                        <div class="result-title">
+
+                            <div class="result-icon database-feature">
+                                ◉
+                            </div>
+
+                            <h3>
+                                Структура БД
+                            </h3>
+
+                        </div>
+
+                    </div>
+
+
+                    <div
+                        id="database-description"
+                        class="card-content"
+                    ></div>
+
+                </article>
+
+
+                <!-- ER-диаграмма -->
+                <article class="result-card diagram-card">
+
+                    <div class="card-header">
+
+                        <div class="result-title">
+
+                            <div class="result-icon er-feature">
+                                ⑂
+                            </div>
+
+                            <h3>
+                                ER-диаграмма
+                            </h3>
+
+                        </div>
+
+                    </div>
+
+
+                    <div
+                        id="mermaid-diagram"
+                        class="mermaid-container"
+                    ></div>
+
+
+                    <div
+                        id="mermaid-error"
+                        class="diagram-error"
+                        hidden
+                    >
+                        Не удалось отобразить ER-диаграмму.
+                    </div>
+
+                </article>
+
+
+                <!-- SQL -->
+                <article class="result-card sql-card">
+
+                    <div class="card-header">
+
+                        <div class="result-title">
+
+                            <div class="result-icon sql-feature">
+                                &lt;/&gt;
+                            </div>
+
+                            <h3>
+                                SQL-запрос
+                            </h3>
+
+                        </div>
+
+
+                        <button
+                            id="copy-button"
+                            class="copy-button"
+                            type="button"
+                        >
+                            Копировать
+                        </button>
+
+                    </div>
+
+
+                    <div class="card-content">
+                        <pre class="sql-code"><code id="sql-query"></code></pre>
+                    </div>
+
+                </article>
+
+
+                <!-- Объяснение -->
+                <article class="result-card explanation-card">
+
+                    <div class="card-header">
+
+                        <div class="result-title">
+
+                            <div class="result-icon explanation-feature">
+                                ▤
+                            </div>
+
+                            <h3>
+                                Объяснение
+                            </h3>
+
+                        </div>
+
+                    </div>
+
+
+                    <div
+                        id="explanation"
+                        class="card-content"
+                    ></div>
+
+                </article>
+
+            </div>
+
+        </section>
+
+    </main>
+
 </body>
+
 </html>

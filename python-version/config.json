@@ -1,11 +1,25 @@
 {
-  "supported_models": [
+  "providers": [
     "gemini",
     "yandexgpt"
   ],
-  "default_model": "gemini",
-  "default_temperature": 0.5,
+  "models": {
+    "gemini": [
+      "gemini-3.5-flash-lite",
+      "gemini-3.1-flash-lite"
+    ],
+    "yandexgpt": [
+      "yandexgpt-5-lite",
+      "yandexgpt-5.1"
+    ]
+  },
+  "default_provider": "yandexgpt",
+  "default_models": {
+    "gemini": "gemini-3.5-flash-lite",
+    "yandexgpt": "yandexgpt-5-lite"
+  },
+  "default_temperature": 0.2,
   "minimum_temperature": 0.0,
   "maximum_temperature": 1.0,
-  "maximum_input_length": 200
+  "maximum_input_length": 1000
 }

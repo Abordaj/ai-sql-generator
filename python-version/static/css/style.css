@@ -1,32 +1,1882 @@
+/* =========================================================
+   AI SQL Generator
+   Final stable reference layout
+   ========================================================= */
+
+:root {
+    --aqua: #35d2c5;
+    --aqua-dark: #18aaa7;
+    --blue: #52a9f2;
+
+    --navy: #102f68;
+    --text: #183d69;
+    --text-secondary: #6887a4;
+    --text-muted: #91a9bf;
+
+    --white: #ffffff;
+
+    --border: rgba(71, 167, 203, 0.25);
+    --border-soft: rgba(255, 255, 255, 0.75);
+
+    --danger: #d92d20;
+    --danger-bg: #fff2f1;
+    --danger-border: #f3c5c1;
+
+    --shadow:
+        0 26px 60px rgba(44, 132, 173, 0.16);
+
+    --transition: 0.2s ease;
+}
+
+
+/* =========================================================
+   RESET
+   ========================================================= */
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    min-height: 100%;
+}
+
 body {
-    font-family: Arial, sans-serif;
     margin: 0;
-    padding: 0;
+    min-height: 100vh;
+    overflow-x: hidden;
+
+    font-family:
+        Inter,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Arial,
+        sans-serif;
+
+    color: var(--text);
+
+    background:
+        linear-gradient(
+            105deg,
+            #aff4e8 0%,
+            #bdeef4 30%,
+            #c2e8fa 61%,
+            #bcdcff 100%
+        );
 }
 
-form {
-    width: 300px;
-    margin: 50px auto;
-    border: 1px solid #ccc;
-    padding: 20px;
+[hidden] {
+    display: none !important;
 }
 
-input[type="text"], input[type="password"], select, input[type="range"] {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 10px;
-    border: 1px solid #ccc;
+button,
+input,
+textarea,
+select {
+    font: inherit;
 }
 
 button {
+    border: 0;
+}
+
+
+/* =========================================================
+   ФОН
+   ========================================================= */
+
+.page-background {
+    position: fixed;
+    inset: 0;
+
+    z-index: 0;
+
+    overflow: hidden;
+    pointer-events: none;
+}
+
+
+/* =========================================================
+   ГОТОВЫЕ ДЕКОРАТИВНЫЕ КАРТИНКИ
+   ========================================================= */
+
+.decor-image-wrapper {
+    position: absolute;
+    overflow: hidden;
+
+    pointer-events: none;
+}
+
+
+/* -------------------------
+   Левая БД + SQL
+   ------------------------- */
+
+.decor-left-wrapper {
+    left: 0;
+    top: 120px;
+
+    width: 350px;
+    height: 680px;
+}
+
+.decor-left-image {
     width: 100%;
-    padding: 10px;
-    background-color: #007bff;
-    color: white;
-    border: none;
+    height: 100%;
+
+    object-fit: cover;
+    object-position: left center;
+
+    /*
+       Мягко растворяем правую границу,
+       чтобы картинка естественно переходила в фон.
+    */
+    -webkit-mask-image:
+        linear-gradient(
+            to right,
+            #000 0%,
+            #000 78%,
+            rgba(0, 0, 0, 0.75) 88%,
+            transparent 100%
+        );
+
+    mask-image:
+        linear-gradient(
+            to right,
+            #000 0%,
+            #000 78%,
+            rgba(0, 0, 0, 0.75) 88%,
+            transparent 100%
+        );
+}
+
+
+/* -------------------------
+   Правая ER-диаграмма
+   ------------------------- */
+
+.decor-right-wrapper {
+    right: 0;
+    top: 120px;
+
+    width: 360px;
+    height: 690px;
+}
+
+.decor-right-image {
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+    object-position: right center;
+
+    /*
+       В исходном фрагменте слева есть край центральной
+       карточки референса. Маской скрываем его.
+    */
+    -webkit-mask-image:
+        linear-gradient(
+            to left,
+            #000 0%,
+            #000 78%,
+            rgba(0, 0, 0, 0.72) 88%,
+            transparent 100%
+        );
+
+    mask-image:
+        linear-gradient(
+            to left,
+            #000 0%,
+            #000 78%,
+            rgba(0, 0, 0, 0.72) 88%,
+            transparent 100%
+        );
+
+    transform: scale(1.05);
+}
+
+
+/* =========================================================
+   ДОПОЛНИТЕЛЬНЫЕ МЯГКИЕ ПЯТНА
+   ========================================================= */
+
+.background-orb {
+    position: absolute;
+    border-radius: 50%;
+}
+
+.orb-left-top {
+    width: 430px;
+    height: 430px;
+
+    left: -220px;
+    top: 20px;
+
+    background:
+        rgba(71, 229, 207, 0.18);
+}
+
+.orb-left-bottom {
+    width: 230px;
+    height: 230px;
+
+    left: 180px;
+    bottom: -90px;
+
+    background:
+        rgba(66, 221, 213, 0.15);
+}
+
+.orb-right-top {
+    width: 380px;
+    height: 380px;
+
+    right: -150px;
+    top: 10px;
+
+    background:
+        rgba(78, 172, 247, 0.16);
+}
+
+.orb-right-bottom {
+    width: 320px;
+    height: 320px;
+
+    right: 150px;
+    bottom: -190px;
+
+    background:
+        rgba(86, 192, 238, 0.13);
+}
+
+
+/* =========================================================
+   БЕЛЫЕ ВОЛНЫ
+   ========================================================= */
+
+.background-wave {
+    position: absolute;
+
+    width: 900px;
+    height: 430px;
+
+    border: 2px solid rgba(255, 255, 255, 0.35);
+    border-radius: 50%;
+}
+
+.wave-one {
+    left: -230px;
+    top: 390px;
+
+    transform:
+        rotate(10deg);
+}
+
+.wave-two {
+    right: -260px;
+    bottom: -170px;
+
+    transform:
+        rotate(-12deg);
+}
+
+
+/* =========================================================
+   ТОЧКИ И ИСКРЫ
+   ========================================================= */
+
+.floating-dot {
+    position: absolute;
+
+    border-radius: 50%;
+
+    background:
+        rgba(255, 255, 255, 0.35);
+}
+
+.dot-one {
+    width: 34px;
+    height: 34px;
+
+    left: 15%;
+    top: 18%;
+}
+
+.dot-two {
+    width: 14px;
+    height: 14px;
+
+    left: 18%;
+    top: 40%;
+
+    background:
+        rgba(48, 198, 225, 0.65);
+}
+
+.dot-three {
+    width: 13px;
+    height: 13px;
+
+    right: 18%;
+    top: 17%;
+
+    background:
+        rgba(51, 172, 233, 0.62);
+}
+
+.dot-four {
+    width: 38px;
+    height: 38px;
+
+    right: 3%;
+    bottom: 17%;
+}
+
+.sparkle {
+    position: absolute;
+
+    color: rgba(255, 255, 255, 0.9);
+
+    text-shadow:
+        0 0 14px rgba(255, 255, 255, 0.65);
+}
+
+.sparkle-one {
+    left: 9%;
+    top: 7%;
+    font-size: 21px;
+}
+
+.sparkle-two {
+    right: 16%;
+    top: 15%;
+    font-size: 35px;
+}
+
+.sparkle-three {
+    right: 8%;
+    top: 31%;
+    font-size: 28px;
+}
+
+.sparkle-four {
+    left: 18%;
+    bottom: 14%;
+    font-size: 16px;
+}
+
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.app-header {
+    position: relative;
+    z-index: 20;
+
+    width: min(1460px, calc(100% - 96px));
+
+    margin: 18px auto 0;
+
+    border:
+        1px solid rgba(255, 255, 255, 0.85);
+
+    border-radius: 23px;
+
+    background:
+        linear-gradient(
+            100deg,
+            rgba(255, 255, 255, 0.85),
+            rgba(245, 252, 255, 0.78)
+        );
+
+    backdrop-filter: blur(18px);
+
+    box-shadow:
+        0 12px 30px rgba(47, 126, 167, 0.08);
+}
+
+.header-container {
+    height: 94px;
+
+    padding: 0 34px 0 47px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 24px;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+
+    gap: 16px;
+}
+
+.brand-mark {
+    width: 60px;
+    height: 60px;
+
+    flex-shrink: 0;
+
+    filter:
+        drop-shadow(
+            0 7px 12px rgba(35, 153, 191, 0.18)
+        );
+}
+
+.brand-mark svg {
+    width: 100%;
+    height: 100%;
+
+    display: block;
+}
+
+.header-title h1 {
+    margin: 0;
+
+    color: #176d99;
+
+    font-size: 30px;
+    font-weight: 800;
+
+    line-height: 1;
+
+    letter-spacing: -0.035em;
+}
+
+.header-title p {
+    margin: 8px 0 0;
+
+    color: #6987a6;
+
+    font-size: 14px;
+}
+
+.logout-form {
+    margin: 0;
+}
+
+.logout-button {
+    min-width: 138px;
+    height: 54px;
+
+    padding: 0 22px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 10px;
+
+    border:
+        1px solid rgba(60, 149, 210, 0.25);
+
+    border-radius: 14px;
+
+    background:
+        rgba(255, 255, 255, 0.82);
+
+    color: #173e75;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 7px 18px rgba(50, 123, 164, 0.07);
+
+    transition:
+        transform var(--transition),
+        background var(--transition),
+        box-shadow var(--transition);
+}
+
+.logout-button:hover {
+    transform: translateY(-1px);
+
+    background: #ffffff;
+
+    box-shadow:
+        0 11px 24px rgba(50, 123, 164, 0.12);
+}
+
+
+/* =========================================================
+   MAIN
+   ========================================================= */
+
+.main-container {
+    position: relative;
+    z-index: 10;
+
+    width: min(1180px, calc(100% - 40px));
+
+    margin: 0 auto;
+
+    padding: 34px 0 70px;
+}
+
+
+/* =========================================================
+   ОСНОВНАЯ КАРТОЧКА
+   ========================================================= */
+
+.generation-card {
+    width: 900px;
+    max-width: 100%;
+
+    margin: 0 auto;
+
+    padding: 27px 31px 22px;
+
+    border:
+        1px solid rgba(255, 255, 255, 0.90);
+
+    border-radius: 29px;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255, 255, 255, 0.94),
+            rgba(248, 253, 255, 0.91)
+        );
+
+    backdrop-filter: blur(16px);
+
+    box-shadow: var(--shadow);
+}
+
+
+/* =========================================================
+   ЗАГОЛОВОК КАРТОЧКИ
+   ========================================================= */
+
+.generation-top {
+    min-height: 74px;
+
+    margin-bottom: 12px;
+
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+
+    gap: 22px;
+}
+
+.generation-heading {
+    display: flex;
+    align-items: center;
+
+    gap: 15px;
+}
+
+.generation-icon {
+    width: 68px;
+    height: 68px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    color: #093e80;
+
+    background:
+        radial-gradient(
+            circle at 28% 23%,
+            rgba(255, 255, 255, 0.82),
+            transparent 34%
+        ),
+        linear-gradient(
+            145deg,
+            #9af4e9,
+            #70dedf 55%,
+            #a0dff8
+        );
+
+    box-shadow:
+        0 0 0 9px rgba(72, 210, 204, 0.07),
+        0 12px 26px rgba(57, 167, 190, 0.17);
+}
+
+.generation-icon svg {
+    width: 36px;
+    height: 36px;
+}
+
+.generation-header h2 {
+    margin: 0 0 5px;
+
+    color: #102e69;
+
+    font-size: 27px;
+    font-weight: 800;
+
+    line-height: 1.15;
+
+    letter-spacing: -0.035em;
+}
+
+.generation-header p {
+    margin: 0;
+
+    color: #6b87a3;
+
+    font-size: 14px;
+}
+
+
+/* =========================================================
+   ПОДСКАЗКА
+   ========================================================= */
+
+.tip-card {
+    min-width: 225px;
+    min-height: 60px;
+
+    padding: 10px 14px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+
+    border:
+        1px solid rgba(55, 186, 208, 0.27);
+
+    border-radius: 14px;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(235, 253, 250, 0.9),
+            rgba(233, 247, 255, 0.87)
+        );
+
+    box-shadow:
+        0 8px 19px rgba(46, 135, 168, 0.06);
+}
+
+.tip-icon {
+    width: 38px;
+    height: 38px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 11px;
+
+    background:
+        rgba(255, 255, 255, 0.73);
+
+    color: #10a9b5;
+}
+
+.tip-card strong {
+    display: block;
+
+    color: #27778d;
+
+    font-size: 13px;
+}
+
+.tip-card span {
+    display: block;
+
+    margin-top: 2px;
+
+    color: #708ba6;
+
+    font-size: 11px;
+}
+
+
+/* =========================================================
+   ФОРМЫ
+   ========================================================= */
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+
+    gap: 7px;
+}
+
+.field-label {
+    display: inline-flex;
+    align-items: center;
+
+    gap: 7px;
+
+    color: #173b70;
+
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.field-icon {
+    min-width: 19px;
+
+    color: #079eb7;
+
+    font-weight: 800;
+
+    text-align: center;
+}
+
+textarea,
+select,
+input[type="text"],
+input[type="password"] {
+    width: 100%;
+
+    border:
+        1px solid rgba(75, 153, 203, 0.27);
+
+    border-radius: 11px;
+
+    outline: none;
+
+    background:
+        rgba(255, 255, 255, 0.92);
+
+    color: #173a63;
+
+    transition:
+        border-color var(--transition),
+        box-shadow var(--transition);
+}
+
+textarea {
+    height: 151px;
+    min-height: 151px;
+
+    padding: 14px 16px;
+
+    resize: vertical;
+
+    line-height: 1.55;
+}
+
+textarea::placeholder,
+input::placeholder {
+    color: #91a8c0;
+}
+
+textarea:focus,
+select:focus,
+input:focus {
+    border-color:
+        rgba(37, 183, 210, 0.55);
+
+    box-shadow:
+        0 0 0 4px rgba(52, 198, 211, 0.09);
+}
+
+.prompt-group {
+    margin-bottom: 12px;
+}
+
+.char-count {
+    align-self: flex-end;
+
+    margin-top: -2px;
+
+    color: #8aa3bc;
+
+    font-size: 11px;
+}
+
+
+/* =========================================================
+   PROVIDER + MODEL
+   ========================================================= */
+
+.settings-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 22px;
+
+    margin-bottom: 13px;
+}
+
+.select-wrapper {
+    position: relative;
+}
+
+select {
+    height: 48px;
+
+    padding: 0 42px 0 15px;
+
     cursor: pointer;
 }
 
-button:hover {
-    background-color: #0056b3;
+.provider-select-wrapper select {
+    padding-left: 53px;
+}
+
+.provider-badge {
+    position: absolute;
+
+    z-index: 2;
+
+    left: 14px;
+    top: 50%;
+
+    transform:
+        translateY(-50%);
+
+    width: 29px;
+    height: 29px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #112769;
+
+    color: #ffffff;
+
+    font-size: 16px;
+
+    pointer-events: none;
+}
+
+
+/* =========================================================
+   ТЕМПЕРАТУРА
+   ========================================================= */
+
+.temperature-group {
+    margin-bottom: 13px;
+}
+
+.temperature-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 10px;
+}
+
+.temperature-value {
+    min-width: 53px;
+
+    padding: 5px 11px;
+
+    display: flex;
+    justify-content: center;
+
+    border-radius: 999px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #dff8ff,
+            #dcefff
+        );
+
+    color: #1265b9;
+
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.temperature-slider-wrapper {
+    width: 100%;
+
+    padding: 2px 0;
+}
+
+
+/*
+   Пока значение по умолчанию 0.2,
+   поэтому первоначально подсвечиваем 20% дорожки.
+   Динамическое заполнение привяжем к JS следующим шагом.
+*/
+input[type="range"] {
+    --range-progress: 20%;
+
+    width: 100%;
+    height: 7px;
+
+    margin: 0;
+
+    appearance: none;
+    -webkit-appearance: none;
+
+    border-radius: 999px;
+
+    outline: none;
+
+    cursor: pointer;
+
+    background:
+        linear-gradient(
+            to right,
+            #35cbc2 0%,
+            #35cbc2 var(--range-progress),
+            #bfd9e9 var(--range-progress),
+            #bfd9e9 100%
+        );
+}
+
+input[type="range"]::-webkit-slider-runnable-track {
+    height: 7px;
+
+    border-radius: 999px;
+
+    background: transparent;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    width: 22px;
+    height: 22px;
+
+    margin-top: -7.5px;
+
+    appearance: none;
+    -webkit-appearance: none;
+
+    border: 2px solid #ffffff;
+    border-radius: 50%;
+
+    background: #3acbc5;
+
+    box-shadow:
+        0 3px 8px rgba(40, 157, 181, 0.28);
+}
+
+input[type="range"]::-moz-range-track {
+    height: 7px;
+
+    border-radius: 999px;
+
+    background: #bfd9e9;
+}
+
+input[type="range"]::-moz-range-progress {
+    height: 7px;
+
+    border-radius: 999px;
+
+    background: #35cbc2;
+}
+
+input[type="range"]::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+
+    border: 2px solid #ffffff;
+    border-radius: 50%;
+
+    background: #3acbc5;
+}
+
+.temperature-hint {
+    display: flex;
+    align-items: center;
+
+    gap: 6px;
+
+    color: #768fab;
+
+    font-size: 11px;
+}
+
+.temperature-info-icon {
+    width: 15px;
+    height: 15px;
+
+    flex-shrink: 0;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #1aaebb;
+
+    color: #ffffff;
+
+    font-size: 10px;
+    font-weight: 800;
+}
+
+
+/* =========================================================
+   ERROR
+   ========================================================= */
+
+.error-message {
+    margin-bottom: 12px;
+
+    padding: 10px 13px;
+
+    border:
+        1px solid var(--danger-border);
+
+    border-radius: 10px;
+
+    background: var(--danger-bg);
+
+    color: var(--danger);
+
+    font-size: 13px;
+}
+
+
+/* =========================================================
+   КНОПКА
+   ========================================================= */
+
+.generate-button {
+    position: relative;
+
+    width: 100%;
+    height: 55px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 12px;
+
+    overflow: hidden;
+
+    border-radius: 13px;
+
+    background:
+        linear-gradient(
+            90deg,
+            #2fd2c4 0%,
+            #32cddd 38%,
+            #3bbbe9 67%,
+            #4c9df6 100%
+        );
+
+    color: #ffffff;
+
+    font-size: 18px;
+    font-weight: 800;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 13px 27px rgba(45, 173, 210, 0.28);
+
+    transition:
+        transform var(--transition),
+        box-shadow var(--transition);
+}
+
+.generate-button:hover:not(:disabled) {
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 18px 34px rgba(45, 173, 210, 0.36);
+}
+
+.generate-button::before {
+    content: "";
+
+    position: absolute;
+
+    top: -70%;
+    left: -100px;
+
+    width: 80px;
+    height: 240%;
+
+    transform: rotate(18deg);
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(255, 255, 255, 0.30),
+            transparent
+        );
+
+    transition:
+        left 0.7s ease;
+}
+
+.generate-button:hover:not(:disabled)::before {
+    left:
+        calc(100% + 30px);
+}
+
+.generate-button:disabled {
+    opacity: 0.68;
+    cursor: not-allowed;
+}
+
+.generate-magic-icon {
+    font-size: 24px;
+}
+
+.generate-arrow {
+    transition:
+        transform var(--transition);
+}
+
+.generate-button:hover .generate-arrow {
+    transform:
+        translateX(4px);
+}
+
+.button-loader {
+    width: 17px;
+    height: 17px;
+
+    border:
+        2px solid rgba(255, 255, 255, 0.4);
+
+    border-top-color: #ffffff;
+
+    border-radius: 50%;
+
+    animation:
+        spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+
+/* =========================================================
+   НИЖНЯЯ ПАНЕЛЬ
+   ========================================================= */
+
+.feature-strip {
+    min-height: 66px;
+
+    margin-top: 15px;
+
+    padding: 9px 14px;
+
+    display: grid;
+
+    grid-template-columns:
+        1fr auto 1fr auto 1fr auto 1fr;
+
+    align-items: center;
+
+    gap: 11px;
+
+    border:
+        1px solid rgba(80, 171, 205, 0.15);
+
+    border-radius: 13px;
+
+    background:
+        rgba(255, 255, 255, 0.67);
+}
+
+.feature-item {
+    min-width: 0;
+
+    display: flex;
+    align-items: center;
+
+    gap: 9px;
+}
+
+.feature-icon,
+.result-icon {
+    width: 40px;
+    height: 40px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 11px;
+
+    font-weight: 800;
+}
+
+.database-feature {
+    color: #08a3af;
+    background: #e4faff;
+}
+
+.er-feature {
+    color: #704ae1;
+    background: #f0ebff;
+}
+
+.sql-feature {
+    color: #0789b7;
+    background: #e4f6ff;
+
+    font-family:
+        Consolas,
+        monospace;
+}
+
+.explanation-feature {
+    color: #0aabb2;
+    background: #e3faf9;
+}
+
+.feature-copy strong {
+    display: block;
+
+    color: #183b6b;
+
+    font-size: 11px;
+
+    line-height: 1.2;
+}
+
+.feature-copy span {
+    display: block;
+
+    margin-top: 3px;
+
+    color: #829ab1;
+
+    font-size: 10px;
+
+    white-space: nowrap;
+}
+
+.feature-divider {
+    width: 1px;
+    height: 34px;
+
+    background:
+        rgba(74, 146, 190, 0.20);
+}
+
+
+/* =========================================================
+   RESULTS
+   ========================================================= */
+
+.results-section {
+    width: 900px;
+    max-width: 100%;
+
+    margin: 38px auto 0;
+}
+
+.results-header {
+    margin-bottom: 15px;
+}
+
+.results-eyebrow {
+    display: inline-flex;
+
+    margin-bottom: 5px;
+
+    padding: 4px 9px;
+
+    border-radius: 999px;
+
+    background: #d9faf3;
+
+    color: #198d89;
+
+    font-size: 11px;
+    font-weight: 800;
+}
+
+.results-header h2 {
+    margin: 0;
+
+    color: #12386b;
+
+    font-size: 23px;
+}
+
+.results-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 20px;
+}
+
+.result-card {
+    min-width: 0;
+
+    overflow: hidden;
+
+    border:
+        1px solid rgba(255, 255, 255, 0.78);
+
+    border-radius: 19px;
+
+    background:
+        rgba(255, 255, 255, 0.80);
+
+    backdrop-filter:
+        blur(13px);
+
+    box-shadow:
+        0 14px 30px rgba(45, 135, 171, 0.10);
+}
+
+.card-header {
+    min-height: 58px;
+
+    padding: 13px 17px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 14px;
+
+    background:
+        linear-gradient(
+            120deg,
+            #e5faf6,
+            #e9f4ff
+        );
+
+    border-bottom:
+        1px solid rgba(72, 163, 198, 0.13);
+}
+
+.result-title {
+    display: flex;
+    align-items: center;
+
+    gap: 9px;
+}
+
+.card-header h3 {
+    margin: 0;
+
+    color: #173b6b;
+
+    font-size: 15px;
+}
+
+.card-content {
+    padding: 18px;
+
+    color: #617f99;
+
+    overflow-wrap: anywhere;
+}
+
+.database-card,
+.diagram-card {
+    min-height: 245px;
+}
+
+
+/* =========================================================
+   MERMAID
+   ========================================================= */
+
+.mermaid-container {
+    min-height: 285px;
+
+    padding: 20px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    overflow: auto;
+
+    background:
+        rgba(255, 255, 255, 0.55);
+}
+
+.mermaid-container svg {
+    max-width: 100%;
+    height: auto;
+}
+
+.mermaid-container svg text {
+    fill: #24516b !important;
+}
+
+.mermaid-container svg rect {
+    fill: #eefbf9 !important;
+    stroke: #4dbac5 !important;
+}
+
+.mermaid-container svg path {
+    stroke: #51adba;
+}
+
+.diagram-error {
+    margin: 16px;
+
+    padding: 12px;
+
+    border-radius: 10px;
+
+    background: var(--danger-bg);
+
+    color: var(--danger);
+}
+
+
+/* =========================================================
+   SQL
+   ========================================================= */
+
+.sql-card {
+    grid-column:
+        1 / -1;
+}
+
+.sql-card .card-content {
+    padding: 0;
+}
+
+.sql-code {
+    margin: 0;
+
+    padding: 22px;
+
+    overflow-x: auto;
+
+    white-space: pre;
+
+    color: #dcf9ff;
+
+    font-family:
+        Consolas,
+        "Liberation Mono",
+        monospace;
+
+    font-size: 14px;
+
+    line-height: 1.7;
+
+    background:
+        radial-gradient(
+            circle at top right,
+            rgba(56, 211, 198, 0.12),
+            transparent 30%
+        ),
+        linear-gradient(
+            135deg,
+            #0e1e2f,
+            #122b3f 55%,
+            #173950
+        );
+}
+
+.copy-button {
+    padding: 7px 11px;
+
+    border:
+        1px solid rgba(76, 165, 200, 0.21);
+
+    border-radius: 9px;
+
+    background:
+        rgba(255, 255, 255, 0.8);
+
+    color: #286776;
+
+    font-size: 12px;
+    font-weight: 700;
+
+    cursor: pointer;
+}
+
+.explanation-card {
+    grid-column:
+        1 / -1;
+}
+
+
+/* =========================================================
+   LOGIN
+   ========================================================= */
+
+.login-page {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 100vh;
+
+    padding: 30px 20px;
+
+    background:
+        linear-gradient(
+            110deg,
+            #aff4e8,
+            #bdeef4,
+            #bcdcff
+        );
+}
+
+.login-container {
+    width: 100%;
+    max-width: 440px;
+}
+
+.login-card {
+    padding: 37px;
+
+    border:
+        1px solid rgba(255, 255, 255, 0.8);
+
+    border-radius: 27px;
+
+    background:
+        rgba(255, 255, 255, 0.87);
+
+    backdrop-filter:
+        blur(16px);
+
+    box-shadow:
+        var(--shadow);
+}
+
+.login-header {
+    margin-bottom: 26px;
+
+    text-align: center;
+}
+
+.login-header h1 {
+    margin: 0 0 8px;
+
+    color: #176d99;
+
+    font-size: 30px;
+}
+
+.login-header p {
+    margin: 0;
+
+    color: #6887a4;
+
+    font-size: 14px;
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+
+    gap: 17px;
+}
+
+.login-form .primary-button {
+    min-height: 49px;
+
+    border-radius: 13px;
+
+    background:
+        linear-gradient(
+            90deg,
+            #31d1c4,
+            #4ca4f3
+        );
+
+    color: #ffffff;
+
+    font-weight: 800;
+
+    cursor: pointer;
+}
+
+
+/* =========================================================
+   ADAPTIVE
+   ========================================================= */
+
+@media (max-width: 1250px) {
+
+    .decor-left-wrapper {
+        width: 280px;
+        opacity: 0.70;
+    }
+
+    .decor-right-wrapper {
+        width: 290px;
+        opacity: 0.70;
+    }
+
+}
+
+
+@media (max-width: 1050px) {
+
+    .decor-left-wrapper,
+    .decor-right-wrapper {
+        opacity: 0.28;
+    }
+
+    .app-header {
+        width:
+            calc(100% - 40px);
+    }
+
+}
+
+
+@media (max-width: 800px) {
+
+    .decor-left-wrapper {
+        opacity: 0.12;
+    }
+
+    .decor-right-wrapper {
+        display: none;
+    }
+
+    .app-header {
+        width:
+            calc(100% - 24px);
+
+        margin-top:
+            12px;
+    }
+
+    .header-container {
+        height:
+            76px;
+
+        padding:
+            0 16px;
+    }
+
+    .brand-mark {
+        width:
+            48px;
+
+        height:
+            48px;
+    }
+
+    .header-title h1 {
+        font-size:
+            22px;
+    }
+
+    .header-title p {
+        display:
+            none;
+    }
+
+    .logout-button {
+        min-width:
+            auto;
+    }
+
+    .logout-button span {
+        display:
+            none;
+    }
+
+    .main-container {
+        padding-top:
+            24px;
+    }
+
+    .generation-card {
+        padding:
+            23px 19px;
+    }
+
+    .generation-top {
+        flex-direction:
+            column;
+    }
+
+    .tip-card {
+        width:
+            100%;
+
+        min-width:
+            0;
+    }
+
+    .settings-grid {
+        grid-template-columns:
+            1fr;
+    }
+
+    .feature-strip {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+    .feature-divider {
+        display:
+            none;
+    }
+
+    .results-grid {
+        grid-template-columns:
+            1fr;
+    }
+
+    .sql-card,
+    .explanation-card {
+        grid-column:
+            auto;
+    }
+
+}
+
+
+@media (max-width: 500px) {
+
+    .decor-left-wrapper {
+        display:
+            none;
+    }
+
+    .generation-heading {
+        align-items:
+            flex-start;
+    }
+
+    .generation-icon {
+        width:
+            54px;
+
+        height:
+            54px;
+    }
+
+    .generation-header h2 {
+        font-size:
+            21px;
+    }
+
+    .feature-strip {
+        grid-template-columns:
+            1fr;
+    }
+
+}
+/* =========================================================
+   FIT TO SCREEN
+   Слегка уменьшаем высоту интерфейса без изменения дизайна
+   ========================================================= */
+
+/* Header чуть компактнее */
+.app-header {
+    margin-top: 12px;
+}
+
+.header-container {
+    height: 82px;
+}
+
+
+/* Меньше расстояние между header и основной карточкой */
+.main-container {
+    padding-top: 22px;
+}
+
+
+/* Немного компактнее сама карточка */
+.generation-card {
+    padding: 20px 31px 18px;
+}
+
+
+/* Верхний блок */
+.generation-top {
+    min-height: 62px;
+    margin-bottom: 7px;
+}
+
+
+/* AI-иконка совсем немного меньше */
+.generation-icon {
+    width: 60px;
+    height: 60px;
+}
+
+.generation-icon svg {
+    width: 32px;
+    height: 32px;
+}
+
+
+/* Чуть компактнее поле запроса */
+textarea {
+    height: 125px;
+    min-height: 125px;
+}
+
+
+/* Убираем лишние вертикальные интервалы */
+.prompt-group {
+    margin-bottom: 7px;
+}
+
+.settings-grid {
+    margin-bottom: 8px;
+}
+
+.temperature-group {
+    margin-bottom: 8px;
+}
+
+
+/* Кнопка остаётся крупной, но чуть ниже */
+.generate-button {
+    height: 52px;
+}
+/* Нижняя панель ближе к кнопке */
+.feature-strip {
+    min-height: 60px;
+    margin-top: 10px;
+    padding-top: 7px;
+    padding-bottom: 7px;
+}
+/* =========================================================
+   Бейдж выбранного LLM-провайдера
+   ========================================================= */
+
+.provider-badge-yandex {
+    background: #112769;
+    color: #ffffff;
+}
+
+.provider-badge-gemini {
+    background:
+        linear-gradient(
+            135deg,
+            #4f8df7 0%,
+            #7b61e8 50%,
+            #d65ccf 100%
+        );
+
+    color: #ffffff;
 }
